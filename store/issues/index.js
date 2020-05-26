@@ -1,104 +1,141 @@
 import {
   SOFTWARE_PIPELINE,
   SOFTWARE_HIVE,
-  SOFTWARE_PANGEA,
-  SOFTWARE_AIR2POST,
+  // SOFTWARE_PANGEA,
+  // SOFTWARE_AIR2POST,
   RECENT_DEPLOYMENTS,
   CRITICAL_ISSUES,
   QA_ISSUES,
   DEFAULT_ISSUES,
   URGENT_ISSUES,
+  GROUP_CRITICAL,
+  GROUP_URGENT,
+  GROUP_DEPLOYED,
+  GROUP_DEVELOPMENT,
+  GROUP_QA,
 } from '~/constants'
+
+const token = () => {
+  // Set token depending on where the call is made.
+  if (process.server) {
+    return `Basic ${Buffer.from(
+      `${process.env.userEmail}:${process.env.token}`,
+      `binary`
+    ).toString(`base64`)}`
+  } else if (process.client) {
+    return `Basic ${btoa(`${process.env.userEmail}:${process.env.token}`)}`
+  }
+}
 
 export const state = () => ({
   [SOFTWARE_PIPELINE]: {
-    deployments: [],
-    critical: [],
-    urgent: [],
-    default: [],
-    qa: [],
+    [GROUP_DEPLOYED]: [],
+    [GROUP_CRITICAL]: [],
+    [GROUP_URGENT]: [],
+    [GROUP_DEVELOPMENT]: [],
+    [GROUP_QA]: [],
   },
+
   [SOFTWARE_HIVE]: {
-    deployments: [],
-    critical: [],
-    urgent: [],
-    default: [],
-    qa: [],
+    [GROUP_DEPLOYED]: [],
+    [GROUP_CRITICAL]: [],
+    [GROUP_URGENT]: [],
+    [GROUP_DEVELOPMENT]: [],
+    [GROUP_QA]: [],
   },
-  [SOFTWARE_PANGEA]: {
-    deployments: [],
-    critical: [],
-    urgent: [],
-    default: [],
-    qa: [],
-  },
-  [SOFTWARE_AIR2POST]: {
-    deployments: [],
-    critical: [],
-    urgent: [],
-    default: [],
-    qa: [],
-  },
+
+  // [SOFTWARE_PANGEA]: {
+  //   [GROUP_DEPLOYED]: [],
+  //   [GROUP_CRITICAL]: [],
+  //   [GROUP_URGENT]: [],
+  //   [GROUP_DEVELOPMENT]: [],
+  //   [GROUP_QA]: [],
+  // },
+
+  // [SOFTWARE_AIR2POST]: {
+  //   [GROUP_DEPLOYED]: [],
+  //   [GROUP_CRITICAL]: [],
+  //   [GROUP_URGENT]: [],
+  //   [GROUP_DEVELOPMENT]: [],
+  //   [GROUP_QA]: [],
+  // },
 })
 
 export const getters = {
-  deployments: (state) => (software) => {
-    return state[software].deployments
+  [`${SOFTWARE_PIPELINE}-${GROUP_DEPLOYED}`]: (state) => {
+    return state[SOFTWARE_PIPELINE][GROUP_DEPLOYED]
   },
 
-  critical: (state) => (software) => {
-    return state[software].critical
+  [`${SOFTWARE_PIPELINE}-${GROUP_CRITICAL}`]: (state) => {
+    return state[SOFTWARE_PIPELINE][GROUP_CRITICAL]
   },
 
-  urgent: (state) => (software) => {
-    return state[software].urgent
+  [`${SOFTWARE_PIPELINE}-${GROUP_URGENT}`]: (state) => {
+    return state[SOFTWARE_PIPELINE][GROUP_URGENT]
   },
 
-  default: (state) => (software) => {
-    return state[software].default
+  [`${SOFTWARE_PIPELINE}-${GROUP_DEVELOPMENT}`]: (state) => {
+    return state[SOFTWARE_PIPELINE][GROUP_DEVELOPMENT]
   },
 
-  qa: (state) => (software) => {
-    return state[software].qa
+  [`${SOFTWARE_PIPELINE}-${GROUP_QA}`]: (state) => {
+    return state[SOFTWARE_PIPELINE][GROUP_QA]
+  },
+
+  [`${SOFTWARE_HIVE}-${GROUP_DEPLOYED}`]: (state) => {
+    return state[SOFTWARE_HIVE][GROUP_DEPLOYED]
+  },
+
+  [`${SOFTWARE_HIVE}-${GROUP_CRITICAL}`]: (state) => {
+    return state[SOFTWARE_HIVE][GROUP_CRITICAL]
+  },
+
+  [`${SOFTWARE_HIVE}-${GROUP_URGENT}`]: (state) => {
+    return state[SOFTWARE_HIVE][GROUP_URGENT]
+  },
+
+  [`${SOFTWARE_HIVE}-${GROUP_DEVELOPMENT}`]: (state) => {
+    return state[SOFTWARE_HIVE][GROUP_DEVELOPMENT]
+  },
+
+  [`${SOFTWARE_HIVE}-${GROUP_QA}`]: (state) => {
+    return state[SOFTWARE_HIVE][GROUP_QA]
   },
 }
 
 export const mutations = {
   SET_DEPLOYMENTS(state, { software, issues }) {
-    state[software].deployments = issues
+    state[software][GROUP_DEPLOYED] = issues
   },
 
   SET_CRITICAL(state, { software, issues }) {
-    state[software].critical = issues
+    state[software][GROUP_CRITICAL] = issues
   },
 
   SET_URGENT(state, { software, issues }) {
-    state[software].urgent = issues
+    state[software][GROUP_URGENT] = issues
   },
 
   SET_DEFAULT(state, { software, issues }) {
-    state[software].default = issues
+    state[software][GROUP_DEVELOPMENT] = issues
   },
 
   SET_QA(state, { software, issues }) {
-    state[software].qa = issues
+    state[software][GROUP_QA] = issues
   },
 }
 
 export const actions = {
   async SET_DEPLOYMENTS({ commit }, { project, software, days }) {
-    console.time(`Get ${software} Deployments`)
     try {
       const deploymentIssues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            RECENT_DEPLOYMENTS([project], [software], days)
+            RECENT_DEPLOYMENTS(project, software, days)
           )}`,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.userEmail}:${process.env.token}`
-              )}`,
+              Authorization: token(),
               Accept: `application/json`,
             },
           }
@@ -115,23 +152,18 @@ export const actions = {
     } catch (e) {
       console.log(e)
     }
-    console.timeEnd(`Get ${software} Deployments`)
   },
 
   async SET_CRITICAL({ commit }, { project, software }) {
-    console.time(`Get ${software} Critical`)
-    console.log(CRITICAL_ISSUES([project], [software]))
     try {
       const deploymentIssues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            CRITICAL_ISSUES([project], [software])
+            CRITICAL_ISSUES(project, software)
           )}`,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.userEmail}:${process.env.token}`
-              )}`,
+              Authorization: token(),
               Accept: `application/json`,
             },
           }
@@ -148,23 +180,18 @@ export const actions = {
     } catch (e) {
       console.log(e)
     }
-    console.timeEnd(`Get ${software} Critical`)
   },
 
   async SET_URGENT({ commit }, { project, software }) {
-    console.time(`Get ${software} Urgent`)
-    console.log(URGENT_ISSUES([project], [software]))
     try {
       const deploymentIssues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            URGENT_ISSUES([project], [software])
+            URGENT_ISSUES(project, software)
           )}`,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.userEmail}:${process.env.token}`
-              )}`,
+              Authorization: token(),
               Accept: `application/json`,
             },
           }
@@ -181,23 +208,18 @@ export const actions = {
     } catch (e) {
       console.log(e)
     }
-    console.timeEnd(`Get ${software} Urgent`)
   },
 
   async SET_DEFAULT({ commit }, { project, software }) {
-    console.time(`Get ${software} Default`)
-    console.log(DEFAULT_ISSUES([project], [software]))
     try {
       const deploymentIssues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            DEFAULT_ISSUES([project], [software])
+            DEFAULT_ISSUES(project, software)
           )}`,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.userEmail}:${process.env.token}`
-              )}`,
+              Authorization: token(),
               Accept: `application/json`,
             },
           }
@@ -214,23 +236,18 @@ export const actions = {
     } catch (e) {
       console.log(e)
     }
-    console.timeEnd(`Get ${software} Default`)
   },
 
   async SET_QA({ commit }, { project, software }) {
-    console.time(`Get ${software} QA`)
-    console.log(QA_ISSUES([project], [software]))
     try {
       const deploymentIssues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            QA_ISSUES([project], [software])
+            QA_ISSUES(project, software)
           )}`,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.userEmail}:${process.env.token}`
-              )}`,
+              Authorization: token(),
               Accept: `application/json`,
             },
           }
@@ -247,6 +264,13 @@ export const actions = {
     } catch (e) {
       console.log(e)
     }
-    console.timeEnd(`Get ${software} QA`)
+  },
+
+  SET_ISSUES({ dispatch }, { project, software, days }) {
+    dispatch(`SET_DEPLOYMENTS`, { project, software, days })
+    dispatch(`SET_CRITICAL`, { project, software })
+    dispatch(`SET_URGENT`, { project, software })
+    dispatch(`SET_DEFAULT`, { project, software })
+    dispatch(`SET_QA`, { project, software })
   },
 }

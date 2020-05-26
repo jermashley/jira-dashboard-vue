@@ -21,18 +21,28 @@ const QA_PROCESS_STATUSES = [
 /**
  * Clean up arrays and return joined string with each array item wrapped in double-quotes.
  *
- * @param {array} data
+ * @param {array|string} data
  */
 const sanitizeData = (data) => {
-  if (data.length >= 2) {
-    const sanitized = data.map((value) => {
-      return `"${value}"`
-    })
+  // Check if input data is array.
+  if (Array.isArray(data)) {
+    // If array, map over values and wrap each in double-quotes.
+    if (data.length >= 2) {
+      const sanitized = data.map((value) => {
+        return `"${value}"`
+      })
 
-    return sanitized.join()
-  } else {
-    const sanitized = `"${data[0]}"`
-    return sanitized
+      // Join array items and separate by comma
+      return sanitized.join()
+    } else {
+      // If single array item, wrap in double-quotes and return item as string.
+      const sanitized = `"${data[0]}"`
+
+      return sanitized
+    }
+  } else if (typeof data === `string`) {
+    // If input data is string, wrap in double-quotes and return.
+    return `"${data}"`
   }
 }
 

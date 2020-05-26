@@ -1,37 +1,62 @@
 <template>
-  <div>Jira Template</div>
+  <div>
+    <issueCard :title="titles.qa" :issues="issuesHiveQa" />
+    <issueCard :title="titles.development" :issues="issuesHiveDevelopment" />
+  </div>
 </template>
 
 <script>
-import { PROJECT_SAM, SOFTWARE_PIPELINE } from '../constants'
+import issueCard from '@/components/issueCard'
+import { mapGetters } from 'vuex'
+import {
+  PROJECT_PM,
+  PROJECT_SAM,
+  SOFTWARE_PIPELINE,
+  SOFTWARE_HIVE,
+  GROUP_CRITICAL,
+  GROUP_URGENT,
+  GROUP_DEPLOYED,
+  GROUP_DEVELOPMENT,
+  GROUP_QA,
+} from '@/constants'
 
 export default {
-  mounted() {
-    this.$store.dispatch(`issues/SET_DEPLOYMENTS`, {
-      project: PROJECT_SAM,
-      software: SOFTWARE_PIPELINE,
-      days: 15,
-    })
+  components: {
+    issueCard,
+  },
 
-    this.$store.dispatch(`issues/SET_CRITICAL`, {
-      project: PROJECT_SAM,
-      software: SOFTWARE_PIPELINE,
-    })
+  fetch() {
+    const projects = [PROJECT_PM, PROJECT_SAM]
+    const softwares = [SOFTWARE_PIPELINE, SOFTWARE_HIVE]
 
-    this.$store.dispatch(`issues/SET_URGENT`, {
-      project: PROJECT_SAM,
-      software: SOFTWARE_PIPELINE,
+    projects.forEach((project) => {
+      softwares.forEach((software) => {
+        this.$store.dispatch(`issues/SET_ISSUES`, {
+          project,
+          software,
+          days: 15,
+        })
+      })
     })
+  },
 
-    this.$store.dispatch(`issues/SET_DEFAULT`, {
-      project: PROJECT_SAM,
-      software: SOFTWARE_PIPELINE,
-    })
+  data() {
+    return {
+      titles: {
+        critical: GROUP_CRITICAL,
+        urgent: GROUP_URGENT,
+        deployed: GROUP_DEPLOYED,
+        development: GROUP_DEVELOPMENT,
+        qa: GROUP_QA,
+      },
+    }
+  },
 
-    this.$store.dispatch(`issues/SET_QA`, {
-      project: PROJECT_SAM,
-      software: SOFTWARE_PIPELINE,
-    })
+  computed: {
+    ...mapGetters({
+      issuesHiveQa: `issues/${SOFTWARE_HIVE}-${GROUP_QA}`,
+      issuesHiveDevelopment: `issues/${SOFTWARE_HIVE}-${GROUP_DEVELOPMENT}`,
+    }),
   },
 }
 </script>

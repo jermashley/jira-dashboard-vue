@@ -56,6 +56,24 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     `@nuxtjs/dotenv`,
   ],
+  /**
+   * Tailwind config
+   */
+  tailwindcss: {
+    configPath: `~/tailwind.config.js`,
+    cssPath: `~/assets/css/tailwind.css`,
+    exposeConfig: false,
+  },
+  /**
+   * Post CSS config
+   */
+  postcss: {
+    plugins: {
+      'postcss-import': true,
+      tailwindcss: true,
+      autoprefixer: true,
+    },
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
