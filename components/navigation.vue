@@ -89,9 +89,18 @@
 
       <div class="nav-button-group">
         <nuxt-link
+          to="/"
+          class="nav-button"
+          :class="{ active: $route.path === `/` }"
+        >
+          All
+        </nuxt-link>
+
+        <nuxt-link
           v-for="link in navIssueLinks"
           :key="link.name"
           class="nav-button"
+          :class="{ active: $route.path === link.path }"
           :to="link.path"
         >
           {{ link.name }}
@@ -182,11 +191,19 @@ section {
   }
 
   .nav-button {
-    @apply px-4 py-3 rounded-md bg-transparent text-sm text-gray-100 font-medium;
+    @apply px-4 py-2 rounded-md bg-transparent text-sm text-gray-100 font-medium transition duration-300 ease-in-out;
+
+    &:not(:last-child) {
+      @apply mb-1;
+    }
 
     &:hover {
-      @apply bg-gray-900 text-gray-400;
+      @apply bg-gray-900 text-gray-400 bg-opacity-50 transition duration-300 ease-in-out;
     }
+  }
+
+  .active {
+    @apply bg-gray-900 text-gray-100 transition duration-300 ease-in-out;
   }
 }
 </style>

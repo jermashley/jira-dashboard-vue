@@ -26,7 +26,7 @@ export default {
   align-items: stretch;
 
   width: 100%;
-  height: 100%;
+  height: 100vh;
   min-height: 100vh;
 
   margin: 0;
@@ -39,5 +39,7 @@ main {
   width: 100%;
 
   padding: 1.5rem;
+
+  overflow-y: auto;
 }
 </style>

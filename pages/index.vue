@@ -1,8 +1,16 @@
 <template>
-  <div>
-    <issueCard :title="titles.qa" :issues="issuesHiveQa" />
-    <issueCard :title="titles.development" :issues="issuesHiveDevelopment" />
-  </div>
+  <section>
+    <div>
+      <issueCard :title="titles.critical" :issues="pipelineCritical" />
+      <issueCard :title="titles.urgent" :issues="pipelineUrgent" />
+      <issueCard :title="titles.deployed" :issues="pipelineDeployed" />
+    </div>
+
+    <div>
+      <issueCard :title="titles.development" :issues="pipelineDevelopment" />
+      <issueCard :title="titles.qa" :issues="pipelineQa" />
+    </div>
+  </section>
 </template>
 
 <script>
@@ -54,13 +62,24 @@ export default {
 
   computed: {
     ...mapGetters({
-      issuesHiveQa: `issues/${SOFTWARE_HIVE}-${GROUP_QA}`,
-      issuesHiveDevelopment: `issues/${SOFTWARE_HIVE}-${GROUP_DEVELOPMENT}`,
+      pipelineCritical: `issues/${SOFTWARE_PIPELINE}-${GROUP_CRITICAL}`,
+      pipelineUrgent: `issues/${SOFTWARE_PIPELINE}-${GROUP_URGENT}`,
+      pipelineDeployed: `issues/${SOFTWARE_PIPELINE}-${GROUP_DEPLOYED}`,
+      pipelineDevelopment: `issues/${SOFTWARE_PIPELINE}-${GROUP_DEVELOPMENT}`,
+      pipelineQa: `issues/${SOFTWARE_PIPELINE}-${GROUP_QA}`,
     }),
   },
 }
 </script>
 
-<style lang="scss">
-/*  */
+<style lang="scss" scoped>
+section {
+  display: grid;
+  grid-template-columns: minmax(32rem, 2fr) minmax(32rem, 3fr);
+  grid-gap: 1.5rem;
+
+  @media screen and (max-width: 84rem) {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

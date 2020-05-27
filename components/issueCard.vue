@@ -44,9 +44,9 @@
               </p>
             </td>
             <td>
-              <p class="status">
+              <div class="status">
                 <span class="status-badge">{{ issue.fields.status.name }}</span>
-              </p>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -144,7 +144,7 @@ header {
 
 section {
   height: auto;
-  max-height: 24rem;
+  max-height: 28rem;
 
   @apply w-full overflow-y-auto;
 }
@@ -158,7 +158,7 @@ table {
     @apply font-bold text-gray-600 uppercase;
 
     th {
-      @apply pt-4 pb-2 bg-white sticky top-0 text-left;
+      @apply pt-4 pb-2 bg-white sticky top-0 text-left border-b border-solid border-gray-300;
 
       &:not(:first-child):not(:last-child) {
         @apply px-2;
@@ -216,12 +216,10 @@ table {
 }
 
 .status {
-  max-width: 10rem;
-
-  @apply text-right w-full;
+  @apply flex flex-row justify-end items-center m-0 p-0;
 }
 
 .status-badge {
-  @apply text-right text-gray-700 text-xs font-medium px-4 px-2 border border-solid border-gray-700 rounded whitespace-no-wrap;
+  @apply inline text-center text-gray-700 text-xs font-medium px-4 px-2 border border-solid border-gray-700 rounded whitespace-no-wrap;
 }
 </style>
