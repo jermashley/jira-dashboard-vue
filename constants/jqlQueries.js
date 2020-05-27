@@ -60,7 +60,7 @@ export const RECENT_DEPLOYMENTS = (
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status CHANGED FROM "Needs Deployment" to "Deployed" AFTER -${days}d ORDER BY created`
+  )}) AND status CHANGED FROM "Needs Deployment" to "Deployed" AFTER -${days}d ORDER BY createdDate`
 }
 
 /**
@@ -75,7 +75,7 @@ export const CRITICAL_ISSUES = (
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status not in ("Deployed", "Done") AND priority = "Critical" ORDER BY created`
+  )}) AND status not in ("Deployed", "Done") AND priority = "Critical" ORDER BY createdDate`
 }
 
 /**
@@ -90,7 +90,7 @@ export const URGENT_ISSUES = (
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status not in ("Deployed", "Done") AND "Is Urgent" = "Urgent" ORDER BY created`
+  )}) AND status not in ("Deployed", "Done") AND "Is Urgent" = "Urgent" ORDER BY createdDate`
 }
 
 /**
@@ -105,7 +105,7 @@ export const QA_ISSUES = (
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status in (${sanitizeData(QA_PROCESS_STATUSES)}) ORDER BY created`
+  )}) AND status in (${sanitizeData(QA_PROCESS_STATUSES)}) ORDER BY createdDate`
 }
 
 /**
@@ -122,5 +122,5 @@ export const DEFAULT_ISSUES = (
     software
   )}) AND status not in ("Backlog", ${sanitizeData(
     QA_PROCESS_STATUSES
-  )}, "Deployed", "Done") AND "Is Urgent" is EMPTY AND priority != Critical ORDER BY created DESC`
+  )}, "Deployed", "Done") AND "Is Urgent" is EMPTY AND priority != Critical ORDER BY createdDate DESC`
 }

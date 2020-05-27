@@ -1,13 +1,25 @@
 <template>
   <article>
     <header>
-      <div class="icon" :class="`bg-${iconColor}`">
-        A
+      <div class="badge" :class="`bg-${badge.background}`">
+        <font-awesome-icon
+          :icon="[`fas`, badge.icon]"
+          :class="`text-${badge.color}`"
+          style="width: 12px; height: 12px;"
+        />
       </div>
 
       <h2>{{ title }}</h2>
 
-      <div class="group"></div>
+      <div class="group">
+        <span
+          v-tippy="{ arrow: true }"
+          class="text-sm font-medium text-gray-700"
+          :content="`${issues.length} in ${title}`"
+        >
+          {{ issues.length }}
+        </span>
+      </div>
     </header>
 
     <section>
@@ -15,7 +27,7 @@
         <thead>
           <tr>
             <th>Key</th>
-            <th>Priority</th>
+            <th>P</th>
             <th>Summary</th>
             <th>Status</th>
           </tr>
@@ -26,16 +38,23 @@
             <td>
               <a
                 :href="`https://prologuetech.atlassian.net/browse/${issue.key}`"
+                target="_blank"
                 class="key"
               >
                 {{ issue.key }}
+                <font-awesome-icon
+                  class="external-link"
+                  :icon="[`fas`, `external-link`]"
+                />
               </a>
             </td>
             <td>
               <img
+                v-tippy="{ arrow: true }"
                 :src="issue.fields.priority.iconUrl"
                 :alt="`${issue.fields.priority.name} icon`"
-                style="width: 0.75rem; height: 0.75rem;"
+                style="width: 0.75rem; max-width: 0.75rem; height: 0.75rem; max-height: 0.75rem;"
+                :content="`${issue.fields.priority.name}`"
               />
             </td>
             <td>
@@ -80,25 +99,61 @@ export default {
   },
 
   computed: {
-    iconColor() {
+    badge() {
+      let badge = {
+        background: `gray-300`,
+        icon: `smile`,
+        color: `gray-700`,
+      }
+
       switch (this.title) {
         case GROUP_CRITICAL:
-          return `red-500`
+          badge = {
+            background: `red-500`,
+            icon: `exclamation`,
+            color: `white`,
+          }
+
+          return badge
 
         case GROUP_URGENT:
-          return `yellow-300`
+          badge = {
+            background: `yellow-300`,
+            icon: `angle-double-up`,
+            color: `gray-700`,
+          }
+
+          return badge
 
         case GROUP_DEPLOYED:
-          return `green-500`
+          badge = {
+            background: `green-500`,
+            icon: `check`,
+            color: `white`,
+          }
+
+          return badge
 
         case GROUP_DEVELOPMENT:
-          return `blue-600`
+          badge = {
+            background: `blue-600`,
+            icon: `code-branch`,
+            color: `white`,
+          }
+
+          return badge
 
         case GROUP_QA:
-          return `indigo-500`
+          badge = {
+            background: `indigo-500`,
+            icon: `shield-check`,
+            color: `white`,
+          }
+
+          return badge
 
         default:
-          return `gray-300`
+          return badge
       }
     },
   },
@@ -126,7 +181,7 @@ article {
 header {
   @apply flex flex-row flex-no-wrap w-full px-4 py-2 bg-gray-200;
 
-  .icon {
+  .badge {
     width: 1.375rem;
     height: 1.375rem;
 
@@ -206,8 +261,18 @@ table {
 .key {
   @apply text-xs text-gray-700 font-medium whitespace-no-wrap;
 
+  .external-link {
+    font-size: 0.625rem;
+
+    @apply ml-1 align-baseline text-blue-500 opacity-0 transition duration-300 ease-in-out;
+  }
+
   &:hover {
     @apply text-blue-600;
+
+    .external-link {
+      @apply opacity-100 transition duration-300 ease-in-out;
+    }
   }
 }
 

@@ -89,9 +89,9 @@
 
       <div class="nav-button-group">
         <nuxt-link
-          to="/"
+          to="/issues"
           class="nav-button"
-          :class="{ active: $route.path === `/` }"
+          :class="{ active: $route.path === `/issues` }"
         >
           All
         </nuxt-link>
@@ -135,11 +135,11 @@ export default {
       const navIssueLinks = [
         {
           name: SOFTWARE_PIPELINE,
-          path: `#`,
+          path: `/issues/${SOFTWARE_PIPELINE.toLowerCase()}`,
         },
         {
           name: SOFTWARE_HIVE,
-          path: `#`,
+          path: `/issues/${SOFTWARE_HIVE.toLowerCase()}`,
         },
       ]
 

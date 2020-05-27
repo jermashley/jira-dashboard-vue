@@ -62,6 +62,41 @@ export const state = () => ({
 })
 
 export const getters = {
+  [`all-${GROUP_DEPLOYED}`]: (state) => {
+    const merged = state[SOFTWARE_PIPELINE][GROUP_DEPLOYED].concat(
+      state[SOFTWARE_HIVE][GROUP_DEPLOYED]
+    )
+    return merged
+  },
+
+  [`all-${GROUP_CRITICAL}`]: (state) => {
+    const merged = state[SOFTWARE_PIPELINE][GROUP_CRITICAL].concat(
+      state[SOFTWARE_HIVE][GROUP_CRITICAL]
+    )
+    return merged
+  },
+
+  [`all-${GROUP_URGENT}`]: (state) => {
+    const merged = state[SOFTWARE_PIPELINE][GROUP_URGENT].concat(
+      state[SOFTWARE_HIVE][GROUP_URGENT]
+    )
+    return merged
+  },
+
+  [`all-${GROUP_DEVELOPMENT}`]: (state) => {
+    const merged = state[SOFTWARE_PIPELINE][GROUP_DEVELOPMENT].concat(
+      state[SOFTWARE_HIVE][GROUP_DEVELOPMENT]
+    )
+    return merged
+  },
+
+  [`all-${GROUP_QA}`]: (state) => {
+    const merged = state[SOFTWARE_PIPELINE][GROUP_QA].concat(
+      state[SOFTWARE_HIVE][GROUP_QA]
+    )
+    return merged
+  },
+
   [`${SOFTWARE_PIPELINE}-${GROUP_DEPLOYED}`]: (state) => {
     return state[SOFTWARE_PIPELINE][GROUP_DEPLOYED]
   },
