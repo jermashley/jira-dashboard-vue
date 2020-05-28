@@ -3,16 +3,18 @@ import {
   SOFTWARE_HIVE,
   // SOFTWARE_PANGEA,
   // SOFTWARE_AIR2POST,
-  RECENT_DEPLOYMENTS,
-  CRITICAL_ISSUES,
-  QA_ISSUES,
-  DEFAULT_ISSUES,
-  URGENT_ISSUES,
   GROUP_CRITICAL,
   GROUP_URGENT,
   GROUP_DEPLOYED,
   GROUP_DEVELOPMENT,
   GROUP_QA,
+  PROJECT_SAM,
+  PROJECT_PDEV,
+  recentDeployments,
+  criticalIssues,
+  qaIssues,
+  defaultIssues,
+  urgentIssues,
 } from '~/constants'
 
 const token = () => {
@@ -28,20 +30,40 @@ const token = () => {
 }
 
 export const state = () => ({
-  [SOFTWARE_PIPELINE]: {
-    [GROUP_DEPLOYED]: [],
-    [GROUP_CRITICAL]: [],
-    [GROUP_URGENT]: [],
-    [GROUP_DEVELOPMENT]: [],
-    [GROUP_QA]: [],
+  [PROJECT_SAM]: {
+    [SOFTWARE_PIPELINE]: {
+      [GROUP_DEPLOYED]: [],
+      [GROUP_CRITICAL]: [],
+      [GROUP_URGENT]: [],
+      [GROUP_DEVELOPMENT]: [],
+      [GROUP_QA]: [],
+    },
+
+    [SOFTWARE_HIVE]: {
+      [GROUP_DEPLOYED]: [],
+      [GROUP_CRITICAL]: [],
+      [GROUP_URGENT]: [],
+      [GROUP_DEVELOPMENT]: [],
+      [GROUP_QA]: [],
+    },
   },
 
-  [SOFTWARE_HIVE]: {
-    [GROUP_DEPLOYED]: [],
-    [GROUP_CRITICAL]: [],
-    [GROUP_URGENT]: [],
-    [GROUP_DEVELOPMENT]: [],
-    [GROUP_QA]: [],
+  [PROJECT_PDEV]: {
+    [SOFTWARE_PIPELINE]: {
+      [GROUP_DEPLOYED]: [],
+      [GROUP_CRITICAL]: [],
+      [GROUP_URGENT]: [],
+      [GROUP_DEVELOPMENT]: [],
+      [GROUP_QA]: [],
+    },
+
+    [SOFTWARE_HIVE]: {
+      [GROUP_DEPLOYED]: [],
+      [GROUP_CRITICAL]: [],
+      [GROUP_URGENT]: [],
+      [GROUP_DEVELOPMENT]: [],
+      [GROUP_QA]: [],
+    },
   },
 
   // [SOFTWARE_PANGEA]: {
@@ -62,111 +84,49 @@ export const state = () => ({
 })
 
 export const getters = {
-  [`all-${GROUP_DEPLOYED}`]: (state) => {
-    const merged = state[SOFTWARE_PIPELINE][GROUP_DEPLOYED].concat(
-      state[SOFTWARE_HIVE][GROUP_DEPLOYED]
-    )
+  allIssues: (state) => (group) => {
+    const merged = [
+      ...state[PROJECT_SAM][SOFTWARE_PIPELINE][group],
+      ...state[PROJECT_PDEV][SOFTWARE_HIVE][group],
+    ]
+
     return merged
   },
 
-  [`all-${GROUP_CRITICAL}`]: (state) => {
-    const merged = state[SOFTWARE_PIPELINE][GROUP_CRITICAL].concat(
-      state[SOFTWARE_HIVE][GROUP_CRITICAL]
-    )
-    return merged
-  },
-
-  [`all-${GROUP_URGENT}`]: (state) => {
-    const merged = state[SOFTWARE_PIPELINE][GROUP_URGENT].concat(
-      state[SOFTWARE_HIVE][GROUP_URGENT]
-    )
-    return merged
-  },
-
-  [`all-${GROUP_DEVELOPMENT}`]: (state) => {
-    const merged = state[SOFTWARE_PIPELINE][GROUP_DEVELOPMENT].concat(
-      state[SOFTWARE_HIVE][GROUP_DEVELOPMENT]
-    )
-    return merged
-  },
-
-  [`all-${GROUP_QA}`]: (state) => {
-    const merged = state[SOFTWARE_PIPELINE][GROUP_QA].concat(
-      state[SOFTWARE_HIVE][GROUP_QA]
-    )
-    return merged
-  },
-
-  [`${SOFTWARE_PIPELINE}-${GROUP_DEPLOYED}`]: (state) => {
-    return state[SOFTWARE_PIPELINE][GROUP_DEPLOYED]
-  },
-
-  [`${SOFTWARE_PIPELINE}-${GROUP_CRITICAL}`]: (state) => {
-    return state[SOFTWARE_PIPELINE][GROUP_CRITICAL]
-  },
-
-  [`${SOFTWARE_PIPELINE}-${GROUP_URGENT}`]: (state) => {
-    return state[SOFTWARE_PIPELINE][GROUP_URGENT]
-  },
-
-  [`${SOFTWARE_PIPELINE}-${GROUP_DEVELOPMENT}`]: (state) => {
-    return state[SOFTWARE_PIPELINE][GROUP_DEVELOPMENT]
-  },
-
-  [`${SOFTWARE_PIPELINE}-${GROUP_QA}`]: (state) => {
-    return state[SOFTWARE_PIPELINE][GROUP_QA]
-  },
-
-  [`${SOFTWARE_HIVE}-${GROUP_DEPLOYED}`]: (state) => {
-    return state[SOFTWARE_HIVE][GROUP_DEPLOYED]
-  },
-
-  [`${SOFTWARE_HIVE}-${GROUP_CRITICAL}`]: (state) => {
-    return state[SOFTWARE_HIVE][GROUP_CRITICAL]
-  },
-
-  [`${SOFTWARE_HIVE}-${GROUP_URGENT}`]: (state) => {
-    return state[SOFTWARE_HIVE][GROUP_URGENT]
-  },
-
-  [`${SOFTWARE_HIVE}-${GROUP_DEVELOPMENT}`]: (state) => {
-    return state[SOFTWARE_HIVE][GROUP_DEVELOPMENT]
-  },
-
-  [`${SOFTWARE_HIVE}-${GROUP_QA}`]: (state) => {
-    return state[SOFTWARE_HIVE][GROUP_QA]
+  issueGroup: (state) => (project, software, group) => {
+    return state[project][software][group]
   },
 }
 
 export const mutations = {
-  SET_DEPLOYMENTS(state, { software, issues }) {
-    state[software][GROUP_DEPLOYED] = issues
+  SET_DEPLOYMENTS(state, { project, software, issues }) {
+    state[project][software][GROUP_DEPLOYED] = issues
   },
 
-  SET_CRITICAL(state, { software, issues }) {
-    state[software][GROUP_CRITICAL] = issues
+  SET_CRITICAL(state, { project, software, issues }) {
+    state[project][software][GROUP_CRITICAL] = issues
   },
 
-  SET_URGENT(state, { software, issues }) {
-    state[software][GROUP_URGENT] = issues
+  SET_URGENT(state, { project, software, issues }) {
+    state[project][software][GROUP_URGENT] = issues
   },
 
-  SET_DEFAULT(state, { software, issues }) {
-    state[software][GROUP_DEVELOPMENT] = issues
+  SET_DEFAULT(state, { project, software, issues }) {
+    state[project][software][GROUP_DEVELOPMENT] = issues
   },
 
-  SET_QA(state, { software, issues }) {
-    state[software][GROUP_QA] = issues
+  SET_QA(state, { project, software, issues }) {
+    state[project][software][GROUP_QA] = issues
   },
 }
 
 export const actions = {
   async SET_DEPLOYMENTS({ commit }, { project, software, days }) {
     try {
-      const deploymentIssues = await this.$axios
+      const issues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            RECENT_DEPLOYMENTS(project, software, days)
+            recentDeployments(project, software, days)
           )}`,
           {
             headers: {
@@ -181,8 +141,9 @@ export const actions = {
         .catch((e) => console.log(e))
 
       commit(`SET_DEPLOYMENTS`, {
+        project,
         software,
-        issues: deploymentIssues,
+        issues,
       })
     } catch (e) {
       console.log(e)
@@ -191,10 +152,10 @@ export const actions = {
 
   async SET_CRITICAL({ commit }, { project, software }) {
     try {
-      const deploymentIssues = await this.$axios
+      const issues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            CRITICAL_ISSUES(project, software)
+            criticalIssues(project, software)
           )}`,
           {
             headers: {
@@ -209,8 +170,9 @@ export const actions = {
         .catch((e) => console.log(e))
 
       commit(`SET_CRITICAL`, {
+        project,
         software,
-        issues: deploymentIssues,
+        issues,
       })
     } catch (e) {
       console.log(e)
@@ -219,10 +181,10 @@ export const actions = {
 
   async SET_URGENT({ commit }, { project, software }) {
     try {
-      const deploymentIssues = await this.$axios
+      const issues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            URGENT_ISSUES(project, software)
+            urgentIssues(project, software)
           )}`,
           {
             headers: {
@@ -237,8 +199,9 @@ export const actions = {
         .catch((e) => console.log(e))
 
       commit(`SET_URGENT`, {
+        project,
         software,
-        issues: deploymentIssues,
+        issues,
       })
     } catch (e) {
       console.log(e)
@@ -247,10 +210,10 @@ export const actions = {
 
   async SET_DEFAULT({ commit }, { project, software }) {
     try {
-      const deploymentIssues = await this.$axios
+      const issues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            DEFAULT_ISSUES(project, software)
+            defaultIssues(project, software)
           )}`,
           {
             headers: {
@@ -265,8 +228,9 @@ export const actions = {
         .catch((e) => console.log(e))
 
       commit(`SET_DEFAULT`, {
+        project,
         software,
-        issues: deploymentIssues,
+        issues,
       })
     } catch (e) {
       console.log(e)
@@ -275,10 +239,10 @@ export const actions = {
 
   async SET_QA({ commit }, { project, software }) {
     try {
-      const deploymentIssues = await this.$axios
+      const issues = await this.$axios
         .$get(
           `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            QA_ISSUES(project, software)
+            qaIssues(project, software)
           )}`,
           {
             headers: {
@@ -293,8 +257,9 @@ export const actions = {
         .catch((e) => console.log(e))
 
       commit(`SET_QA`, {
+        project,
         software,
-        issues: deploymentIssues,
+        issues,
       })
     } catch (e) {
       console.log(e)

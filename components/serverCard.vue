@@ -1,24 +1,10 @@
 <template>
   <article>
     <header>
-      <div class="badge" :class="`bg-${badge.background}`">
-        <font-awesome-icon
-          :icon="[`fas`, badge.icon]"
-          :class="`text-${badge.color}`"
-          style="width: 12px; height: 12px;"
-        />
-      </div>
-
       <h2>{{ title }}</h2>
 
       <div class="group">
-        <span
-          v-tippy="{ arrow: true }"
-          class="text-sm font-medium text-gray-700"
-          :content="`${issues.length} in ${title}`"
-        >
-          {{ issues.length }}
-        </span>
+        <!--  -->
       </div>
     </header>
 
@@ -26,10 +12,10 @@
       <table v-if="issues.length >= 1">
         <thead>
           <tr>
+            <th>Server</th>
             <th>Key</th>
-            <th>P</th>
             <th>Summary</th>
-            <th>Status</th>
+            <th></th>
           </tr>
         </thead>
 

@@ -1,15 +1,20 @@
 import {
   PROJECT_SAM,
-  // PROJECT_PM,
   PROJECT_PDEV,
   SOFTWARE_PIPELINE,
   SOFTWARE_HIVE,
   SOFTWARE_AIR2POST,
-  // SOFTWARE_PANGEA,
+  SOFTWARE_PANGEA,
+  PROJECT_PM,
 } from './app'
 
-const DEFAULT_PROJECTS = [PROJECT_SAM, PROJECT_PDEV]
-const DEFAULT_SOFTWARE = [SOFTWARE_PIPELINE, SOFTWARE_HIVE, SOFTWARE_AIR2POST]
+const DEFAULT_PROJECTS = [PROJECT_SAM, PROJECT_PDEV, PROJECT_PM]
+const DEFAULT_SOFTWARE = [
+  SOFTWARE_PIPELINE,
+  SOFTWARE_HIVE,
+  SOFTWARE_AIR2POST,
+  SOFTWARE_PANGEA,
+]
 const DEFAULT_RECENT_DAYS = 15
 const QA_PROCESS_STATUSES = [
   `Needs QA`,
@@ -53,14 +58,14 @@ const sanitizeData = (data) => {
  * @param {array} software
  * @param {number} days
  */
-export const RECENT_DEPLOYMENTS = (
+export const recentDeployments = (
   project = DEFAULT_PROJECTS,
   software = DEFAULT_SOFTWARE,
   days = DEFAULT_RECENT_DAYS
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status CHANGED FROM "Needs Deployment" to "Deployed" AFTER -${days}d ORDER BY createdDate`
+  )}) AND status CHANGED FROM "Needs Deployment" to "Deployed" AFTER -${days}d ORDER BY created DESC`
 }
 
 /**
@@ -69,13 +74,13 @@ export const RECENT_DEPLOYMENTS = (
  * @param {array} project
  * @param {array} software
  */
-export const CRITICAL_ISSUES = (
+export const criticalIssues = (
   project = DEFAULT_PROJECTS,
   software = DEFAULT_SOFTWARE
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status not in ("Deployed", "Done") AND priority = "Critical" ORDER BY createdDate`
+  )}) AND status not in ("Deployed", "Done") AND priority = "Critical" ORDER BY created DESC`
 }
 
 /**
@@ -84,13 +89,13 @@ export const CRITICAL_ISSUES = (
  * @param {array} project
  * @param {array} software
  */
-export const URGENT_ISSUES = (
+export const urgentIssues = (
   project = DEFAULT_PROJECTS,
   software = DEFAULT_SOFTWARE
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status not in ("Deployed", "Done") AND "Is Urgent" = "Urgent" ORDER BY createdDate`
+  )}) AND status not in ("Deployed", "Done") AND "Is Urgent" = "Urgent" ORDER BY created DESC`
 }
 
 /**
@@ -99,13 +104,15 @@ export const URGENT_ISSUES = (
  * @param {array} project
  * @param {array} software
  */
-export const QA_ISSUES = (
+export const qaIssues = (
   project = DEFAULT_PROJECTS,
   software = DEFAULT_SOFTWARE
 ) => {
   return `project in (${sanitizeData(project)}) AND software in (${sanitizeData(
     software
-  )}) AND status in (${sanitizeData(QA_PROCESS_STATUSES)}) ORDER BY createdDate`
+  )}) AND status in (${sanitizeData(
+    QA_PROCESS_STATUSES
+  )}) ORDER BY created DESC`
 }
 
 /**
@@ -114,7 +121,7 @@ export const QA_ISSUES = (
  * @param {array} project
  * @param {array} software
  */
-export const DEFAULT_ISSUES = (
+export const defaultIssues = (
   project = DEFAULT_PROJECTS,
   software = DEFAULT_SOFTWARE
 ) => {
@@ -122,5 +129,11 @@ export const DEFAULT_ISSUES = (
     software
   )}) AND status not in ("Backlog", ${sanitizeData(
     QA_PROCESS_STATUSES
-  )}, "Deployed", "Done") AND "Is Urgent" is EMPTY AND priority != Critical ORDER BY createdDate DESC`
+  )}, "Deployed", "Done") AND "Is Urgent" is EMPTY AND priority != Critical ORDER BY created DESC`
+}
+
+export const statingTestingServer = (server) => {
+  return `project in (${sanitizeData(
+    DEFAULT_PROJECTS
+  )}) and "Staging/Testing Server" in ("${server}") ORDER BY created DESC`
 }

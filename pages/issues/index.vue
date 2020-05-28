@@ -1,14 +1,23 @@
 <template>
   <section>
     <div>
-      <issueCard :title="titles.critical" :issues="allCritical" />
-      <issueCard :title="titles.urgent" :issues="allUrgent" />
-      <issueCard :title="titles.deployed" :issues="allDeployed" />
+      <issueCard
+        :title="groups.critical"
+        :issues="allIssues(groups.critical)"
+      />
+      <issueCard :title="groups.urgent" :issues="allIssues(groups.urgent)" />
+      <issueCard
+        :title="groups.deployed"
+        :issues="allIssues(groups.deployed)"
+      />
     </div>
 
     <div>
-      <issueCard :title="titles.development" :issues="allDevelopment" />
-      <issueCard :title="titles.qa" :issues="allQa" />
+      <issueCard
+        :title="groups.development"
+        :issues="allIssues(groups.development)"
+      />
+      <issueCard :title="groups.qa" :issues="allIssues(groups.qa)" />
     </div>
   </section>
 </template>
@@ -17,7 +26,7 @@
 import issueCard from '@/components/issueCard'
 import { mapGetters } from 'vuex'
 import {
-  PROJECT_PM,
+  PROJECT_PDEV,
   PROJECT_SAM,
   SOFTWARE_PIPELINE,
   SOFTWARE_HIVE,
@@ -33,24 +42,28 @@ export default {
     issueCard,
   },
 
-  fetch() {
-    const projects = [PROJECT_PM, PROJECT_SAM]
+  fetch({ store }) {
+    const projects = [PROJECT_PDEV, PROJECT_SAM]
     const softwares = [SOFTWARE_PIPELINE, SOFTWARE_HIVE]
 
     projects.forEach((project) => {
       softwares.forEach((software) => {
-        this.$store.dispatch(`issues/SET_ISSUES`, {
+        store.dispatch(`issues/SET_ISSUES`, {
           project,
           software,
           days: 15,
         })
       })
     })
+
+    store.dispatch(`SET_STAGING_TESTING_SERVERS`).then(() => {
+      store.dispatch(`SET_STAGING_TESTING_SERVERS_ISSUES`)
+    })
   },
 
   data() {
     return {
-      titles: {
+      groups: {
         critical: GROUP_CRITICAL,
         urgent: GROUP_URGENT,
         deployed: GROUP_DEPLOYED,
@@ -62,11 +75,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      allCritical: `issues/all-${GROUP_CRITICAL}`,
-      allUrgent: `issues/all-${GROUP_URGENT}`,
-      allDeployed: `issues/all-${GROUP_DEPLOYED}`,
-      allDevelopment: `issues/all-${GROUP_DEVELOPMENT}`,
-      allQa: `issues/all-${GROUP_QA}`,
+      allIssues: `issues/allIssues`,
     }),
   },
 }

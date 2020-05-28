@@ -1,14 +1,29 @@
 <template>
   <section>
     <div>
-      <issueCard :title="titles.critical" :issues="pipelineCritical" />
-      <issueCard :title="titles.urgent" :issues="pipelineUrgent" />
-      <issueCard :title="titles.deployed" :issues="pipelineDeployed" />
+      <issueCard
+        :title="groups.critical"
+        :issues="issueGroup(project, software, groups.critical)"
+      />
+      <issueCard
+        :title="groups.urgent"
+        :issues="issueGroup(project, software, groups.urgent)"
+      />
+      <issueCard
+        :title="groups.deployed"
+        :issues="issueGroup(project, software, groups.deployed)"
+      />
     </div>
 
     <div>
-      <issueCard :title="titles.development" :issues="pipelineDevelopment" />
-      <issueCard :title="titles.qa" :issues="pipelineQa" />
+      <issueCard
+        :title="groups.development"
+        :issues="issueGroup(project, software, groups.development)"
+      />
+      <issueCard
+        :title="groups.qa"
+        :issues="issueGroup(project, software, groups.qa)"
+      />
     </div>
   </section>
 </template>
@@ -17,10 +32,8 @@
 import issueCard from '@/components/issueCard'
 import { mapGetters } from 'vuex'
 import {
-  PROJECT_PM,
   PROJECT_SAM,
   SOFTWARE_PIPELINE,
-  SOFTWARE_HIVE,
   GROUP_CRITICAL,
   GROUP_URGENT,
   GROUP_DEPLOYED,
@@ -33,24 +46,19 @@ export default {
     issueCard,
   },
 
-  fetch() {
-    const projects = [PROJECT_PM, PROJECT_SAM]
-    const softwares = [SOFTWARE_PIPELINE, SOFTWARE_HIVE]
-
-    projects.forEach((project) => {
-      softwares.forEach((software) => {
-        this.$store.dispatch(`issues/SET_ISSUES`, {
-          project,
-          software,
-          days: 15,
-        })
-      })
+  fetch({ store }) {
+    store.dispatch(`issues/SET_ISSUES`, {
+      project: PROJECT_SAM,
+      software: SOFTWARE_PIPELINE,
+      days: 8,
     })
   },
 
   data() {
     return {
-      titles: {
+      project: PROJECT_SAM,
+      software: SOFTWARE_PIPELINE,
+      groups: {
         critical: GROUP_CRITICAL,
         urgent: GROUP_URGENT,
         deployed: GROUP_DEPLOYED,
@@ -62,11 +70,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      pipelineCritical: `issues/${SOFTWARE_PIPELINE}-${GROUP_CRITICAL}`,
-      pipelineUrgent: `issues/${SOFTWARE_PIPELINE}-${GROUP_URGENT}`,
-      pipelineDeployed: `issues/${SOFTWARE_PIPELINE}-${GROUP_DEPLOYED}`,
-      pipelineDevelopment: `issues/${SOFTWARE_PIPELINE}-${GROUP_DEVELOPMENT}`,
-      pipelineQa: `issues/${SOFTWARE_PIPELINE}-${GROUP_QA}`,
+      issueGroup: `issues/issueGroup`,
     }),
   },
 }

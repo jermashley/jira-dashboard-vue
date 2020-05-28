@@ -38,8 +38,14 @@ main {
 
   width: 100%;
 
+  margin: 0 auto;
   padding: 1.5rem;
 
   overflow-y: auto;
+
+  @media only screen and (min-width: 96rem) {
+    max-width: 80rem;
+    padding: 1.5rem 4rem;
+  }
 }
 </style>
