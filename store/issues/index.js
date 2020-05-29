@@ -87,6 +87,8 @@ export const getters = {
   allIssues: (state) => (group) => {
     const merged = [
       ...state[PROJECT_SAM][SOFTWARE_PIPELINE][group],
+      ...state[PROJECT_SAM][SOFTWARE_HIVE][group],
+      ...state[PROJECT_PDEV][SOFTWARE_PIPELINE][group],
       ...state[PROJECT_PDEV][SOFTWARE_HIVE][group],
     ]
 

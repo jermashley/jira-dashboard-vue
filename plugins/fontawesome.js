@@ -9,6 +9,7 @@ import {
   faCodeBranch,
   faSmile,
   faExternalLink,
+  faClipboardListCheck,
 } from '@fortawesome/pro-solid-svg-icons'
 
 // This is important, we are going to let Nuxt.js worry about the CSS
@@ -23,7 +24,8 @@ library.add(
   faShieldCheck,
   faCodeBranch,
   faSmile,
-  faExternalLink
+  faExternalLink,
+  faClipboardListCheck
 )
 
 // Register the component globally

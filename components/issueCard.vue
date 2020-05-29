@@ -14,7 +14,7 @@
       <div class="group">
         <span
           v-tippy="{ arrow: true }"
-          class="text-sm font-medium text-gray-700"
+          class="text-sm font-medium leading-none text-gray-700"
           :content="`${issues.length} in ${title}`"
         >
           {{ issues.length }}
@@ -64,6 +64,33 @@
             </td>
             <td>
               <div class="status">
+                <a
+                  v-if="
+                    issue.fields.status.name === readyForQa &&
+                      isDeployedForTesting
+                  "
+                  v-tippy="{ arrow: true }"
+                  :href="
+                    displayTestingServer(
+                      issue.fields[customFields.stagingTestingServer]
+                    )
+                  "
+                  class=""
+                  content="QA test this ussue"
+                >
+                  <font-awesome-icon
+                    :icon="[`fas`, `external-link`]"
+                    class="mr-2 external-link"
+                  />
+
+                  <span
+                    v-if="issue.fields.status.name === readyForQa"
+                    class="status-badge"
+                    :class="setStatusGroupColor(issue.fields.status.name)"
+                  >
+                    {{ issue.fields.status.name }}
+                  </span>
+                </a>
                 <span
                   v-if="issue.fields.status.name === onHold"
                   v-tippy="{ arrow: true }"
@@ -79,22 +106,9 @@
                   {{ issue.fields.status.name }}
                 </span>
                 <span
-                  v-if="issue.fields.status.name === readyForQa"
-                  v-tippy="{ arrow: true, allowHTML: true, interactive: true }"
-                  class="status-badge"
-                  :class="setStatusGroupColor(issue.fields.status.name)"
-                  :content="
-                    displayTestingServer(
-                      issue.fields[customFields.stagingTestingServer]
-                    )
-                  "
-                >
-                  {{ issue.fields.status.name }}
-                </span>
-                <span
                   v-if="
-                    issue.fields.status.name !== readyForQa &&
-                      issue.fields.status.name !== onHold
+                    issue.fields.status.name !== onHold &&
+                      issue.fields.status.name !== readyForQa
                   "
                   class="status-badge"
                   :class="setStatusGroupColor(issue.fields.status.name)"
@@ -225,11 +239,15 @@ export default {
       }
     },
 
+    isDeployedForTesting(server) {
+      return !!server
+    },
+
     displayTestingServer(server) {
       if (server) {
-        return `<a class="underline" href="https://${server.value}.flatworldsc.com/" target="_blank">QA test this issue</a>`
+        return `https://${server.value}.flatworldsc.com/`
       } else {
-        return `This issue has not been deployed.`
+        return `#`
       }
     },
 
@@ -275,7 +293,7 @@ header {
   }
 
   .group {
-    @apply flex;
+    @apply flex flex-row justify-start items-center;
   }
 }
 
@@ -284,6 +302,12 @@ section {
   max-height: 28rem;
 
   @apply w-full overflow-y-auto;
+}
+
+.external-link {
+  font-size: 0.625rem;
+
+  @apply ml-1 align-baseline text-blue-500 opacity-0 transition duration-300 ease-in-out;
 }
 
 table {
@@ -314,6 +338,7 @@ table {
   tbody {
     tr {
       @apply transition duration-300 ease-in-out;
+
       &:nth-child(odd) {
         @apply bg-gray-300 bg-opacity-50;
       }
@@ -324,6 +349,10 @@ table {
 
       &:hover {
         @apply bg-gray-300 bg-opacity-75 transition duration-300 ease-in-out;
+
+        .external-link {
+          @apply opacity-100 transition duration-300 ease-in-out;
+        }
       }
     }
 
@@ -346,20 +375,10 @@ table {
 }
 
 .key {
-  @apply text-xs text-gray-700 font-medium whitespace-no-wrap;
-
-  .external-link {
-    font-size: 0.625rem;
-
-    @apply ml-1 align-baseline text-blue-500 opacity-0 transition duration-300 ease-in-out;
-  }
+  @apply text-xs text-gray-700 font-medium whitespace-no-wrap transition duration-300 ease-in-out;
 
   &:hover {
-    @apply text-blue-600;
-
-    .external-link {
-      @apply opacity-100 transition duration-300 ease-in-out;
-    }
+    @apply text-blue-600 transition duration-300 ease-in-out;
   }
 }
 
