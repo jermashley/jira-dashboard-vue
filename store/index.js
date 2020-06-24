@@ -70,6 +70,35 @@ export const mutations = {
 }
 
 export const actions = {
+  /* eslint-disable */
+  async nuxtServerInit({ dispatch }) {
+    dispatch(`SET_ISSUES`)
+  },
+  /* eslint-enable */
+
+  SET_ISSUES({ dispatch }) {
+    const projects = [PROJECT_PDEV, PROJECT_SAM]
+    const softwares = [SOFTWARE_PIPELINE, SOFTWARE_HIVE]
+
+    projects.forEach((project) => {
+      softwares.forEach((software) => {
+        dispatch(
+          `issues/SET_ISSUES`,
+          {
+            project,
+            software,
+            days: 15,
+          },
+          { root: true }
+        )
+      })
+    })
+
+    dispatch(`SET_STAGING_TESTING_SERVERS`, null, { root: true }).then(() => {
+      dispatch(`SET_STAGING_TESTING_SERVERS_ISSUES`, null, { root: true })
+    })
+  },
+
   async SET_STAGING_TESTING_SERVERS({ commit }) {
     try {
       const servers = await this.$axios
@@ -86,7 +115,7 @@ export const actions = {
 
       commit(`SET_STAGING_TESTING_SERVERS`, { servers })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 
@@ -113,7 +142,7 @@ export const actions = {
               })
             })
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
       })
     } else {

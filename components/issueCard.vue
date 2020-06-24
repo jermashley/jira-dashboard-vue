@@ -42,10 +42,6 @@
                 class="key"
               >
                 {{ issue.key }}
-                <font-awesome-icon
-                  class="external-link"
-                  :icon="[`fas`, `external-link`]"
-                />
               </a>
             </td>
             <td>
@@ -59,7 +55,15 @@
             </td>
             <td>
               <p class="summary">
-                {{ issue.fields.summary }}
+                <a
+                  :href="
+                    `https://prologuetech.atlassian.net/browse/${issue.key}`
+                  "
+                  target="_blank"
+                  class="summary-link"
+                >
+                  {{ issue.fields.summary }}
+                </a>
               </p>
             </td>
             <td>
@@ -75,6 +79,7 @@
                       issue.fields[customFields.stagingTestingServer]
                     )
                   "
+                  target="_blank"
                   class=""
                   content="QA test this ussue"
                 >
@@ -375,15 +380,21 @@ table {
 }
 
 .key {
-  @apply text-xs text-gray-700 font-medium whitespace-no-wrap transition duration-300 ease-in-out;
+  @apply text-xs text-gray-700 font-medium whitespace-no-wrap transition duration-300 ease-in-out no-underline;
 
   &:hover {
-    @apply text-blue-600 transition duration-300 ease-in-out;
+    @apply text-blue-600 transition duration-300 ease-in-out underline;
   }
 }
 
 .summary {
-  @apply text-sm text-gray-700 font-normal;
+  &-link {
+    @apply text-xs text-gray-700 font-normal transition duration-300 ease-in-out no-underline;
+
+    &:hover {
+      @apply text-blue-600 transition duration-300 ease-in-out underline;
+    }
+  }
 }
 
 .status {

@@ -127,7 +127,7 @@ export const actions = {
     try {
       const issues = await this.$axios
         .$get(
-          `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
+          `search?jql=${encodeURIComponent(
             recentDeployments(project, software, days)
           )}`,
           {
@@ -140,7 +140,7 @@ export const actions = {
         .then((res) => {
           return res.issues
         })
-        .catch((e) => console.log(e))
+        .catch((e) => console.error(e))
 
       commit(`SET_DEPLOYMENTS`, {
         project,
@@ -148,7 +148,7 @@ export const actions = {
         issues,
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 
@@ -156,9 +156,7 @@ export const actions = {
     try {
       const issues = await this.$axios
         .$get(
-          `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            criticalIssues(project, software)
-          )}`,
+          `search?jql=${encodeURIComponent(criticalIssues(project, software))}`,
           {
             headers: {
               Authorization: token(),
@@ -169,7 +167,7 @@ export const actions = {
         .then((res) => {
           return res.issues
         })
-        .catch((e) => console.log(e))
+        .catch((e) => console.error(e))
 
       commit(`SET_CRITICAL`, {
         project,
@@ -177,7 +175,7 @@ export const actions = {
         issues,
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 
@@ -185,9 +183,7 @@ export const actions = {
     try {
       const issues = await this.$axios
         .$get(
-          `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            urgentIssues(project, software)
-          )}`,
+          `search?jql=${encodeURIComponent(urgentIssues(project, software))}`,
           {
             headers: {
               Authorization: token(),
@@ -198,7 +194,7 @@ export const actions = {
         .then((res) => {
           return res.issues
         })
-        .catch((e) => console.log(e))
+        .catch((e) => console.error(e))
 
       commit(`SET_URGENT`, {
         project,
@@ -206,7 +202,7 @@ export const actions = {
         issues,
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 
@@ -214,9 +210,7 @@ export const actions = {
     try {
       const issues = await this.$axios
         .$get(
-          `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            defaultIssues(project, software)
-          )}`,
+          `search?jql=${encodeURIComponent(defaultIssues(project, software))}`,
           {
             headers: {
               Authorization: token(),
@@ -227,7 +221,7 @@ export const actions = {
         .then((res) => {
           return res.issues
         })
-        .catch((e) => console.log(e))
+        .catch((e) => console.error(e))
 
       commit(`SET_DEFAULT`, {
         project,
@@ -235,28 +229,23 @@ export const actions = {
         issues,
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 
   async SET_QA({ commit }, { project, software }) {
     try {
       const issues = await this.$axios
-        .$get(
-          `https://prologuetech.atlassian.net/rest/api/3/search?jql=${encodeURIComponent(
-            qaIssues(project, software)
-          )}`,
-          {
-            headers: {
-              Authorization: token(),
-              Accept: `application/json`,
-            },
-          }
-        )
+        .$get(`search?jql=${encodeURIComponent(qaIssues(project, software))}`, {
+          headers: {
+            Authorization: token(),
+            Accept: `application/json`,
+          },
+        })
         .then((res) => {
           return res.issues
         })
-        .catch((e) => console.log(e))
+        .catch((e) => console.error(e))
 
       commit(`SET_QA`, {
         project,
@@ -264,7 +253,7 @@ export const actions = {
         issues,
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   },
 

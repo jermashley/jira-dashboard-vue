@@ -1,7 +1,13 @@
 require(`dotenv`).config()
 
 export default {
-  mode: `spa`,
+  mode: `universal`,
+  vue: {
+    config: {
+      devtools: true,
+    },
+  },
+
   env: {
     userEmail: process.env.USER_EMAIL || `jeremiah@prologuetechnology.com`,
     token: process.env.TOKEN || ``,
@@ -11,6 +17,7 @@ export default {
    */
   head: {
     title: process.env.npm_package_name || ``,
+    script: [{ src: `http://localhost:8098` }],
     meta: [
       { charset: `utf-8` },
       { name: `viewport`, content: `width=device-width, initial-scale=1` },
@@ -20,7 +27,6 @@ export default {
         content: process.env.npm_package_description || ``,
       },
     ],
-    script: [{ src: `http://localhost:8098` }],
     link: [{ rel: `icon`, type: `image/x-icon`, href: `/favicon.ico` }],
   },
   /*
@@ -84,7 +90,9 @@ export default {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: `https://prologuetech.atlassian.net/`,
+  },
   /*
    ** Build configuration
    */

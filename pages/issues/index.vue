@@ -87,6 +87,10 @@ section {
   grid-template-columns: minmax(32rem, 2fr) minmax(32rem, 3fr);
   grid-gap: 1.5rem;
 
+  max-width: 72rem;
+  width: 100%;
+  margin: 0 auto;
+
   @media screen and (max-width: 84rem) {
     grid-template-columns: 1fr;
   }

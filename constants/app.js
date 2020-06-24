@@ -50,6 +50,11 @@ export const STATUS_GROUP_DEPLOYMENT = [
   STATUS_DONE,
 ]
 
+/**
+ * Returns a color value bases on status.
+ *
+ * @param {string} status - Issue status string.
+ */
 export const statusGroupColor = (status) => {
   if (STATUS_GROUP_STATIC.includes(status)) {
     return `gray-700`
