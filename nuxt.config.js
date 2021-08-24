@@ -91,7 +91,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: `https://prologuetech.atlassian.net/`,
+    baseURL: `https://prologuetech.atlassian.net/rest/api/3/`,
   },
   /*
    ** Build configuration
